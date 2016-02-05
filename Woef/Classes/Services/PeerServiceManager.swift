@@ -80,8 +80,8 @@ internal class PeerServiceManager : NSObject {
     func sendFile(fileURL: NSURL) {
         NSLog("%@", "sendFile: \(fileURL)")
         if session.connectedPeers.count > 0 {
-            if let host = hostPeerId {
-                self.session.sendResourceAtURL(fileURL, withName: "record", toPeer: host, withCompletionHandler: { (error) -> Void in
+            for peer:MCPeerID in session.connectedPeers {
+                self.session.sendResourceAtURL(fileURL, withName: "record", toPeer: peer, withCompletionHandler: { (error) -> Void in
                     if let e = error {
                         print(e)
                     }

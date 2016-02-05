@@ -12,16 +12,23 @@ import UIKit
 
 class WoefViewController: UIViewController, UITableViewDelegate, PeerServiceManagerDelegate, RecorderDelegate {
     
-    private var isHosting = false {
+    var isHosting = false {
         didSet {
             if isHosting {
                 peerService.serviceAdvertiser.startAdvertisingPeer()
                 peerService.serviceBrowser.stopBrowsingForPeers()
-                self.navigationItem.leftBarButtonItem?.title = "stop"
+                self.navigationItem.leftBarButtonItem?.title = "stop hosting"
+                
+                UIApplication.sharedApplication().idleTimerDisabled = true
+                SoundService.sharedInstance.startLoopingEmpty()
+
             } else {
                 peerService.serviceAdvertiser.stopAdvertisingPeer()
                 peerService.serviceBrowser.startBrowsingForPeers()
-                self.navigationItem.leftBarButtonItem?.title = "start"
+                self.navigationItem.leftBarButtonItem?.title = "start hosting"
+                
+                UIApplication.sharedApplication().idleTimerDisabled = true
+                SoundService.sharedInstance.stopLoopingEmpty()
             }
         }
     }
@@ -34,7 +41,7 @@ class WoefViewController: UIViewController, UITableViewDelegate, PeerServiceMana
         }
     }
     private var soundDataSource = SoundDataSource()
-    private var peerService = PeerServiceManager()
+    var peerService = PeerServiceManager()
     private var recordIndex = 0
     
     var recordURL: NSURL?
@@ -58,8 +65,9 @@ class WoefViewController: UIViewController, UITableViewDelegate, PeerServiceMana
         self.tableView.delegate = self
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "sound_off"), style: .Plain, target: self, action: "soundButtonPressed:")
+        self.navigationItem.rightBarButtonItems?.append(UIBarButtonItem(title: "reconnect", style: .Plain, target: self, action: "reconnectButtonPressed:"))
         
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "start", style: UIBarButtonItemStyle.Plain, target: self, action: "hostButtonPressed:")
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "start hosting", style: UIBarButtonItemStyle.Plain, target: self, action: "hostButtonPressed:")
         
         self.recordButton.layer.cornerRadius = self.recordButton.bounds.size.width / 2
         self.recordButton.layer.borderColor = UIColor.darkGrayColor().CGColor
@@ -70,6 +78,26 @@ class WoefViewController: UIViewController, UITableViewDelegate, PeerServiceMana
     
     func hostButtonPressed(sender: UIBarButtonItem) {
         isHosting = !isHosting
+    }
+    
+    
+    func reconnectButtonPressed(sender: UIBarButtonItem) {
+        if isHosting {
+            peerService.serviceAdvertiser.startAdvertisingPeer()
+            peerService.serviceBrowser.stopBrowsingForPeers()
+            self.navigationItem.leftBarButtonItem?.title = "stop"
+            
+            UIApplication.sharedApplication().idleTimerDisabled = true
+            SoundService.sharedInstance.startLoopingEmpty()
+            
+        } else {
+            peerService.serviceAdvertiser.stopAdvertisingPeer()
+            peerService.serviceBrowser.startBrowsingForPeers()
+            self.navigationItem.leftBarButtonItem?.title = "start"
+            
+            UIApplication.sharedApplication().idleTimerDisabled = true
+            SoundService.sharedInstance.stopLoopingEmpty()
+        }
     }
     
     
@@ -152,18 +180,20 @@ class WoefViewController: UIViewController, UITableViewDelegate, PeerServiceMana
         
         sender.alpha = 1
         UIView.animateWithDuration(0.3, delay: 0, options: [UIViewAnimationOptions.Repeat, UIViewAnimationOptions.Autoreverse], animations: {
-            sender.alpha = 0.4
+            sender.backgroundColor = UIColor(red: 37/255, green: 211/255, blue: 77/255, alpha: 1.0)
         }, completion: nil)
         
-
+        let uniqueFileName = String(NSDate().timeIntervalSince1970)
         let documentDirectoryURL =  try! NSFileManager().URLForDirectory(.DocumentDirectory, inDomain: .UserDomainMask, appropriateForURL: nil, create: true)
-        self.recordURL = documentDirectoryURL.URLByAppendingPathComponent("record")
+        self.recordURL = documentDirectoryURL.URLByAppendingPathComponent(uniqueFileName)
         
         RecorderService.sharedInstance.recordToFile(self.recordURL!)
     }
 
     @IBAction func recordButtonUp(sender: UIButton) {
         print("up")
+        
+        sender.backgroundColor = UIColor.redColor()
         
         sender.layer.removeAllAnimations()
         sender.alpha = 1

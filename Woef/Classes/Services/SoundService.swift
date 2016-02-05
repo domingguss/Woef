@@ -36,10 +36,8 @@ class SoundService : NSObject, AVAudioPlayerDelegate {
         super.init()
         
         do {
-            UIApplication.sharedApplication().idleTimerDisabled = true
             try AVAudioSession.sharedInstance().setCategory(AVAudioSessionCategoryPlayback, withOptions: .MixWithOthers)
             
-            startLoopingEmpty()
         } catch let error as NSError {
             print(error)
         }
