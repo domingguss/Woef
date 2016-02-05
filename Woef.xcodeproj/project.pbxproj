@@ -414,7 +414,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Woef/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = nl.esites.Woef;
+				PRODUCT_BUNDLE_IDENTIFIER = com.esites.Woef;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "b50868f4-2e22-45f5-b41f-2ed6006a1f01";
 			};
@@ -429,7 +429,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Woef/Supporting Files/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = nl.esites.Woef;
+				PRODUCT_BUNDLE_IDENTIFIER = com.esites.Woef;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "3d595cfd-3d1c-4282-ba5a-8d44ee3a0649";
 			};
